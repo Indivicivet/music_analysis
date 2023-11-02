@@ -32,6 +32,8 @@ bpms_smooth = interpolate.UnivariateSpline(
     beat_times[:-1],
     bpms,
     ext="const",
+    k=2,
+    s=500 * len(bpms),
 )(times)
 
 plt.figure(figsize=(12.8, 7.2))

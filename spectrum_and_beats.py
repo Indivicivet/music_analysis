@@ -3,6 +3,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import seaborn
 import numpy as np
+from scipy import interpolate
 import librosa
 
 seaborn.set()
@@ -26,10 +27,19 @@ for i, (t, val) in enumerate(zip(times, onset_spikes)):
 
 deltas = np.array([b - a for a, b in zip(beat_times, beat_times[1:])])
 bpms = 60 / deltas
+
+bpms_smooth = interpolate.UnivariateSpline(
+    beat_times[:-1],
+    bpms,
+    ext="const",
+)(times)
+
 plt.figure(figsize=(12.8, 7.2))
-plt.plot(beat_times[:-1], bpms)
+plt.plot(beat_times[:-1], bpms, label="detected bpms")
+plt.plot(times, bpms_smooth, label="detected bpms (smoothed)")
 plt.xlabel("time")
 plt.ylabel("bpm")
+plt.legend()
 plt.show()
 
 plt.plot(times, 4000 * onset_spikes)

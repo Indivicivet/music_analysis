@@ -8,52 +8,57 @@ import librosa
 
 seaborn.set()
 
+def make_plot(track_path, show_spectrogram=False):
+    timeseries, sample_rate = librosa.load(TRACK_PATH)
+    print(timeseries.shape)
+    onset_env = librosa.onset.onset_strength(
+        y=timeseries,
+        sr=sample_rate,
+    )
+    times = librosa.times_like(onset_env, sr=sample_rate)
+
+    WINDOW = 7  # samples
+    onset_spikes = onset_env * (onset_env > (onset_env.mean() * 1.2))
+    beat_times = []
+    for i, (t, val) in enumerate(zip(times, onset_spikes)):
+        if val and val == onset_spikes[i - WINDOW:i + WINDOW].max():
+            beat_times.append(t)
+
+    deltas = np.array([b - a for a, b in zip(beat_times, beat_times[1:])])
+    bpms = 60 / deltas
+
+    bpms_smooth = interpolate.UnivariateSpline(
+        beat_times[:-1],
+        bpms,
+        ext="const",
+        k=2,
+        s=500 * len(bpms),
+    )(times)
+
+    plt.figure(figsize=(12.8, 7.2))
+    plt.plot(beat_times[:-1], bpms, label="detected bpms", alpha=0.2)
+    plt.plot(times, bpms_smooth, label="detected bpms (smoothed)")
+    plt.xlabel("time")
+    plt.ylabel("bpm")
+    plt.legend()
+    plt.show()
+    if not show_spectrogram:
+        return
+    plt.plot(times, 4000 * onset_spikes)
+    mel_spectrogram = librosa.feature.melspectrogram(
+        y=timeseries,
+        sr=sample_rate,
+        hop_length=512,
+    )
+    librosa.display.specshow(
+        librosa.power_to_db(mel_spectrogram),
+        y_axis="mel",
+        x_axis="time",
+        hop_length=512,
+    )
+    plt.show()
+
+
 TRACK_PATH = Path(__file__).parent / "music" / "ddhn.mp3"
-
-timeseries, sample_rate = librosa.load(TRACK_PATH)
-print(timeseries.shape)
-onset_env = librosa.onset.onset_strength(
-    y=timeseries,
-    sr=sample_rate,
-)
-times = librosa.times_like(onset_env, sr=sample_rate)
-
-WINDOW = 7  # samples
-onset_spikes = onset_env * (onset_env > (onset_env.mean() * 1.2))
-beat_times = []
-for i, (t, val) in enumerate(zip(times, onset_spikes)):
-    if val and val == onset_spikes[i - WINDOW:i + WINDOW].max():
-        beat_times.append(t)
-
-deltas = np.array([b - a for a, b in zip(beat_times, beat_times[1:])])
-bpms = 60 / deltas
-
-bpms_smooth = interpolate.UnivariateSpline(
-    beat_times[:-1],
-    bpms,
-    ext="const",
-    k=2,
-    s=500 * len(bpms),
-)(times)
-
-plt.figure(figsize=(12.8, 7.2))
-plt.plot(beat_times[:-1], bpms, label="detected bpms", alpha=0.2)
-plt.plot(times, bpms_smooth, label="detected bpms (smoothed)")
-plt.xlabel("time")
-plt.ylabel("bpm")
-plt.legend()
-plt.show()
-
-plt.plot(times, 4000 * onset_spikes)
-mel_spectrogram = librosa.feature.melspectrogram(
-    y=timeseries,
-    sr=sample_rate,
-    hop_length=512,
-)
-librosa.display.specshow(
-    librosa.power_to_db(mel_spectrogram),
-    y_axis="mel",
-    x_axis="time",
-    hop_length=512,
-)
+make_plot(TRACK_PATH)
 plt.show()

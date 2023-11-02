@@ -1,8 +1,11 @@
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import seaborn
 import numpy as np
 import librosa
+
+seaborn.set()
 
 TRACK_PATH = Path(__file__).parent / "music" / "ddhn.mp3"
 
@@ -23,7 +26,10 @@ for i, (t, val) in enumerate(zip(times, onset_spikes)):
 
 deltas = np.array([b - a for a, b in zip(beat_times, beat_times[1:])])
 bpms = 60 / deltas
+plt.figure(figsize=(12.8, 7.2))
 plt.plot(beat_times[:-1], bpms)
+plt.xlabel("time")
+plt.ylabel("bpm")
 plt.show()
 
 plt.plot(times, 4000 * onset_spikes)

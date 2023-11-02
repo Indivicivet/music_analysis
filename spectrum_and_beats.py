@@ -8,7 +8,8 @@ import librosa
 
 seaborn.set()
 
-def make_plot(track_path, show_spectrogram=False):
+
+def make_plot(track_path, save_name=None, show_spectrogram=False):
     timeseries, sample_rate = librosa.load(track_path)
     print(timeseries.shape)
     onset_env = librosa.onset.onset_strength(
@@ -41,7 +42,10 @@ def make_plot(track_path, show_spectrogram=False):
     plt.xlabel("time")
     plt.ylabel("bpm")
     plt.legend()
-    plt.show()
+    if save_name is None:
+        plt.show()
+    else:
+        plt.savefig(save_name)
     if not show_spectrogram:
         return
     plt.plot(times, 4000 * onset_spikes)
@@ -59,6 +63,6 @@ def make_plot(track_path, show_spectrogram=False):
     plt.show()
 
 
-TRACK_PATH = Path(__file__).parent / "music" / "ddhn.mp3"
-make_plot(TRACK_PATH)
-plt.show()
+FOLDER = Path(__file__).parent / "working_io"
+for p in FOLDER.glob("*.mp3"):
+    make_plot(p, save_name=p.with_name(f"{p.stem}_bpm_plot.png"))

@@ -14,7 +14,7 @@ onset_env = librosa.onset.onset_strength(
 )
 times = librosa.times_like(onset_env, sr=sample_rate)
 
-WINDOW = 5  # samples
+WINDOW = 7  # samples
 onset_spikes = onset_env * (onset_env > (onset_env.mean() * 1.2))
 beat_times = []
 for i, (t, val) in enumerate(zip(times, onset_spikes)):

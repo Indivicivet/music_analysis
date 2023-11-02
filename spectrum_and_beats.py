@@ -7,6 +7,7 @@ onset_env = librosa.onset.onset_strength(
     y=timeseries,
     sr=sample_rate,
 )
+plt.plot(librosa.times_like(onset_env, sr=sample_rate), 2000 * onset_env)
 mel_spectrogram = librosa.feature.melspectrogram(
     y=timeseries,
     sr=sample_rate,

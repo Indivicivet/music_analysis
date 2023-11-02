@@ -9,7 +9,7 @@ import librosa
 seaborn.set()
 
 def make_plot(track_path, show_spectrogram=False):
-    timeseries, sample_rate = librosa.load(TRACK_PATH)
+    timeseries, sample_rate = librosa.load(track_path)
     print(timeseries.shape)
     onset_env = librosa.onset.onset_strength(
         y=timeseries,

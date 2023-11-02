@@ -37,7 +37,7 @@ bpms_smooth = interpolate.UnivariateSpline(
 )(times)
 
 plt.figure(figsize=(12.8, 7.2))
-plt.plot(beat_times[:-1], bpms, label="detected bpms")
+plt.plot(beat_times[:-1], bpms, label="detected bpms", alpha=0.2)
 plt.plot(times, bpms_smooth, label="detected bpms (smoothed)")
 plt.xlabel("time")
 plt.ylabel("bpm")

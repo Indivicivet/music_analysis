@@ -65,4 +65,7 @@ def make_plot(track_path, save_name=None, show_spectrogram=False):
 
 FOLDER = Path(__file__).parent / "working_io"
 for p in FOLDER.glob("*.mp3"):
-    make_plot(p, save_name=p.with_name(f"{p.stem}_bpm_plot.png"))
+    try:
+        make_plot(p, save_name=p.with_name(f"{p.stem}_bpm_plot.png"))
+    except Exception as e:
+        print(f"EXCEPTION: file {p}: {e!r}")

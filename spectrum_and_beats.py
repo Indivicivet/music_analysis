@@ -3,7 +3,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import seaborn
 import numpy as np
-from scipy import interpolate
+from scipy import interpolate, signal
 import librosa
 
 seaborn.set()
@@ -20,6 +20,12 @@ def make_plot(track_path, save_name=None, show_spectrogram=False):
 
     WINDOW = 7  # samples
     onset_spikes = onset_env * (onset_env > (onset_env.mean() * 1.2))
+    smoothed_onset = signal.convolve(
+        onset_spikes,
+        np.ones([200]) / 200 * 200,
+        mode="same",
+    )
+
     beat_times = []
     for i, (t, val) in enumerate(zip(times, onset_spikes)):
         if val and val == onset_spikes[i - WINDOW:i + WINDOW].max():
@@ -39,6 +45,7 @@ def make_plot(track_path, save_name=None, show_spectrogram=False):
     plt.figure(figsize=(19.2, 10.8))
     plt.plot(beat_times[:-1], bpms, label="detected bpms", alpha=0.2)
     plt.plot(times, bpms_smooth, label="detected bpms (smoothed)")
+    plt.plot(times, smoothed_onset, label="smoothed onset values")
     plt.xlabel("time")
     plt.ylabel("bpm")
     plt.legend()

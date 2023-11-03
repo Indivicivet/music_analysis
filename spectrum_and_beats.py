@@ -11,7 +11,7 @@ seaborn.set()
 
 def make_plot(track_path, save_name=None, show_spectrogram=False):
     timeseries, sample_rate = librosa.load(track_path)
-    print(timeseries.shape)
+    print(timeseries.shape, f"{sample_rate=}")
     onset_env = librosa.onset.onset_strength(
         y=timeseries,
         sr=sample_rate,
@@ -36,7 +36,7 @@ def make_plot(track_path, save_name=None, show_spectrogram=False):
         s=500 * len(bpms),
     )(times)
 
-    plt.figure(figsize=(12.8, 7.2))
+    plt.figure(figsize=(19.2, 10.8))
     plt.plot(beat_times[:-1], bpms, label="detected bpms", alpha=0.2)
     plt.plot(times, bpms_smooth, label="detected bpms (smoothed)")
     plt.xlabel("time")

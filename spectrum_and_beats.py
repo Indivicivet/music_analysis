@@ -46,6 +46,7 @@ def make_plot(track_path, save_name=None, show_spectrogram=False):
     plt.plot(beat_times[:-1], bpms, label="detected bpms", alpha=0.2)
     plt.plot(times, bpms_smooth, label="detected bpms (smoothed)")
     plt.plot(times, smoothed_onset, label="smoothed onset values")
+    plt.gca().margins(0.01, 0.01)
     plt.xlabel("time")
     plt.ylabel("bpm")
     plt.legend()

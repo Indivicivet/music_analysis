@@ -39,12 +39,17 @@ angle_map = {key_id: (2 * np.pi * idx / 12) for idx, key_id in enumerate(circle_
 
 angles = df["equiv_major_key"].map(angle_map)
 
-r_original = df["bpm"]
-r_double = df["bpm"] * 2
+angles_all = np.concatenate([angles] * 3)
+radii_all = np.concatenate([df["bpm"] / 2, df["bpm"], df["bpm"] * 2])
 
+# 3. Filter to only values >80 and <=240 BPM
+mask = (radii_all > 80) & (radii_all <= 240)
+angles_filt = angles_all[mask]
+radii_filt = radii_all[mask]
+
+# 4. Create the polar scatter plot
 fig, ax = plt.subplots(subplot_kw={"projection": "polar"})
-ax.scatter(angles, r_original)
-ax.scatter(angles, r_double)
+ax.scatter(angles_filt, radii_filt)
 
 key_labels = {
     1: "C",

@@ -68,9 +68,18 @@ fig = px.scatter(
     y="bpm",
     color="key_is_minor",
     color_discrete_map={False: "green", True: "purple"},
-    hover_data=["artist", "title", "key", "bpm"],
+    hover_data={
+        "key_is_minor": False,
+        "key_pos_jitter": False,
+        "artist": True,
+        "title": True,
+        "bpm": False,
+        "key": False,
+    },
     labels={
-        "key_pos_jitter": "Circle‑of‑Fifths Position", "bpm": "BPM", "color": "Mode"
+        "key_pos_jitter": "Circle‑of‑Fifths Position",
+        "bpm": "BPM",
+        "color": "Mode",
     },
 )
 

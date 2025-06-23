@@ -64,19 +64,23 @@ df_filt = df_all[
 df_filt = df_filt.assign(
     key_pos_jitter=(
         df_filt["key_pos"] + np.random.uniform(-0.4, 0.4, size=len(df_filt))
-    )
+    ),
+    # jitter bpm for the very zoomed-in case:
+    bpm_jitter=(
+        df_filt["bpm"] + np.random.uniform(-0.02, 0.02, size=len(df_filt))
+    ),
 )
 
 fig = px.scatter(
     df_filt,
     x="key_pos_jitter",
-    y="bpm",
+    y="bpm_jitter",
     color="key_is_minor",
     color_discrete_map={False: "green", True: "purple"},
     custom_data=["artist", "title", "file_path"],
     labels={
         "key_pos_jitter": "Circle‑of‑Fifths Position",
-        "bpm": "BPM",
+        "bpm_jitter": "BPM",
         "color": "Mode",
     },
 )

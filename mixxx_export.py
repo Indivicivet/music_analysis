@@ -60,7 +60,8 @@ fig = px.scatter(
     df_filt,
     x="key_pos_ext",
     y="bpm",
-    color=df_filt["key_is_minor"].map({False: "Major", True: "Minor"}),
+    color="key_is_minor",
+    color_discrete_map={False: "green", True: "purple"},
     hover_data=["artist", "title", "key", "bpm"],
     labels={"key_pos_ext": "Circle‑of‑Fifths Position", "bpm": "BPM", "color": "Mode"},
 )
@@ -87,7 +88,7 @@ fig.update_layout(
             key_labels[circle_order[pos % 12]] for pos in range(MIN_KEY, MAX_KEY + 1)
         ],
     },
-    legend={"title": "Mode"},
+    legend={"title": "Minor"},
     title="BPM vs Circle‑of‑Fifths (interactive)",
 )
 fig.show()

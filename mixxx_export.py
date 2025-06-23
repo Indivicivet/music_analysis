@@ -75,7 +75,7 @@ fig = px.scatter(
         "color": "Mode",
     },
 )
-fig.update_traces(hovertemplate="%{customdata[0]}<br>%{customdata[1]}<extra></extra>")
+fig.update_traces(hovertemplate="%{customdata[1]}<br>%{customdata[0]}<extra></extra>")
 
 key_labels = {
     1: "C<br>(Am)",

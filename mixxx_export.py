@@ -80,18 +80,18 @@ fig.update_traces(
 )
 
 key_labels = {
-    1: "C",
-    8: "G",
-    3: "D",
-    10: "A",
-    5: "E",
-    12: "B",
-    7: "Gb",
-    2: "Db",
-    9: "Ab",
-    4: "Eb",
-    11: "Bb",
-    6: "F",
+    1: "C<br>(Am)",
+    8: "G<br>(Em)",
+    3: "D<br>(Bm)",
+    10: "A<br>(F#m)",
+    5: "E<br>(C#m)",
+    12: "B<br>(G#m)",
+    7: "Gb<br>(Ebm)",
+    2: "Db<br>(Bbm)",
+    9: "Ab<br>(Fm)",
+    4: "Eb<br>(Cm)",
+    11: "Bb<br>(Gm)",
+    6: "F<br>(Dm)",
 }
 fig.update_layout(
     xaxis={

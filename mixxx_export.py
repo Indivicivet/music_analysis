@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.offline as pyo
+import webbrowser
 
 conn = sqlite3.connect(
     database=(

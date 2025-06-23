@@ -41,23 +41,29 @@ df["key_pos"] = df["equiv_major_key"].map(angle_map)
 
 df_all = pd.concat(
     [
-        df.assign(bpm=df["bpm"] / 2),
-        df.assign(bpm=df["bpm"]),
-        df.assign(bpm=df["bpm"] * 2),
+        df.assign(bpm=df["bpm"] * bpm_scale, key_pos_ext=df["key_pos"] + shift)
+        for bpm_scale in [1 / 2, 1, 2]
+        for shift in [-12, 0, 12]
     ],
     ignore_index=True,
 )
-df_filt = df_all[(df_all["bpm"] > 80) & (df_all["bpm"] <= 240)]
+MIN_KEY = -3
+MAX_KEY = 14
+df_filt = df_all[
+    (df_all["key_pos_ext"] >= MIN_KEY)
+    & (df_all["key_pos_ext"] <= MAX_KEY)
+    & (df_all["bpm"] > 80)
+    & (df_all["bpm"] <= 240)
+]
 
 fig = px.scatter(
     df_filt,
-    x="key_pos",
+    x="key_pos_ext",
     y="bpm",
     color=df_filt["key_is_minor"].map({False: "Major", True: "Minor"}),
     hover_data=["artist", "title", "key", "bpm"],
-    labels={"key_pos": "Circle‑of‑Fifths Position", "bpm": "BPM", "color": "Mode"},
+    labels={"key_pos_ext": "Circle‑of‑Fifths Position", "bpm": "BPM", "color": "Mode"},
 )
-
 
 key_labels = {
     1: "C",
@@ -76,8 +82,10 @@ key_labels = {
 fig.update_layout(
     xaxis={
         "tickmode": "array",
-        "tickvals": list(range(len(circle_order))),
-        "ticktext": [key_labels[k] for k in circle_order],
+        "tickvals": list(range(MIN_KEY, MAX_KEY + 1)),
+        "ticktext": [
+            key_labels[circle_order[pos % 12]] for pos in range(MIN_KEY, MAX_KEY + 1)
+        ],
     },
     legend={"title": "Mode"},
     title="BPM vs Circle‑of‑Fifths (interactive)",

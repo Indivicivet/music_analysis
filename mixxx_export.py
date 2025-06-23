@@ -53,8 +53,8 @@ df_all = pd.concat(
     ],
     ignore_index=True,
 )
-MIN_KEY = -3
-MAX_KEY = 14
+MIN_KEY = -2
+MAX_KEY = 11 + 2
 df_filt = df_all[
     (df_all["key_pos_ext"] >= MIN_KEY)
     & (df_all["key_pos_ext"] <= MAX_KEY)

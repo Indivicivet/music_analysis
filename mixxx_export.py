@@ -135,7 +135,31 @@ output_file.write_text(
           .join(".");
         navigator.clipboard
           .writeText(fileStem)
-          .then(() => console.log("Copied:", fileStem))
+          .then(() => {
+            // create a toast div
+            const toast = document.createElement("div");
+            toast.textContent = `Copied: ${fileStem}`;
+            Object.assign(toast.style, {
+              fontFamily: "sans-serif",
+              position: "fixed",
+              bottom: "20px",
+              right: "20px",
+              backgroundColor: "rgba(0,0,0,0.7)",
+              color: "#fff",
+              padding: "12px 20px",
+              borderRadius: "6px",
+              fontSize: "22px",
+              zIndex: 1000,
+              opacity: 0,
+              transition: "opacity 0.3s",
+            });
+            document.body.appendChild(toast);
+            // fade in
+            setTimeout(() => (toast.style.opacity = 1), 10);
+            // fade out and remove
+            setTimeout(() => (toast.style.opacity = 0), 2000);
+            setTimeout(() => document.body.removeChild(toast), 2300);
+          })
           .catch((err) => console.error("Clipboard error:", err));
       });
     </script>

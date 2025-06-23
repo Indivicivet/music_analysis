@@ -106,6 +106,7 @@ fig.update_layout(
     },
     legend={"title": "Minor"},
     title="BPM vs Circle‑of‑Fifths (interactive)",
+    height=850,
 )
 
 # standalone HTML, so we can augment with "click to copy file track"

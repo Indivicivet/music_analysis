@@ -38,7 +38,6 @@ df["file_path"] = df["location"].fillna("").astype(str)
 df["key_is_minor"] = df["key_id"] > 12
 df["equiv_major_key"] = df["key_id"]
 df.loc[df["key_is_minor"], "equiv_major_key"] = (df["key_id"] - 13 + 3) % 12 + 1
-print(df.head().to_string())
 
 circle_order = [1, 8, 3, 10, 5, 12, 7, 2, 9, 4, 11, 6]
 angle_map = {key_id: idx for idx, key_id in enumerate(circle_order)}
@@ -108,7 +107,7 @@ fig.update_layout(
     legend={"title": "Minor"},
     title="BPM vs Circle‑of‑Fifths (interactive)",
 )
-fig.show()
+
 # standalone HTML, so we can augment with "click to copy file track"
 chart_div = pyo.plot(fig, include_plotlyjs="cdn", output_type="div")
 output_file = Path(__file__).parent / "out" / "bpm_circle.html"

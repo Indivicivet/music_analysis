@@ -4,7 +4,7 @@ import sqlite3
 
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+import plotly.express as px
 
 conn = sqlite3.connect(
     database=(
@@ -37,21 +37,27 @@ print(df.head().to_string())
 circle_order = [1, 8, 3, 10, 5, 12, 7, 2, 9, 4, 11, 6]
 angle_map = {key_id: (2 * np.pi * idx / 12) for idx, key_id in enumerate(circle_order)}
 
-angles = df["equiv_major_key"].map(angle_map)
+df["key_pos"] = df["equiv_major_key"].map(angle_map)
 
-angles_all = np.concatenate([angles] * 3)
-radii_all = np.concatenate([df["bpm"] / 2, df["bpm"], df["bpm"] * 2])
-minor_all = np.concatenate([df["key_is_minor"].values] * 3)
+df_all = pd.concat(
+    [
+        df.assign(bpm=df["bpm"] / 2),
+        df.assign(bpm=df["bpm"]),
+        df.assign(bpm=df["bpm"] * 2),
+    ],
+    ignore_index=True,
+)
+df_filt = df_all[(df_all["bpm"] > 80) & (df_all["bpm"] <= 240)]
 
-mask = (radii_all > 80) & (radii_all <= 240)
-angles_filt = angles_all[mask]
-radii_filt = radii_all[mask]
-minor_filt = minor_all[mask]
+fig = px.scatter(
+    df_filt,
+    x="key_pos",
+    y="bpm",
+    color=df_filt["key_is_minor"].map({False: "Major", True: "Minor"}),
+    hover_data=["artist", "title", "key", "bpm"],
+    labels={"key_pos": "Circle‑of‑Fifths Position", "bpm": "BPM", "color": "Mode"},
+)
 
-colors = np.where(minor_filt, "purple", "green")
-
-fig, ax = plt.subplots(subplot_kw={"projection": "polar"})
-ax.scatter(angles_filt, radii_filt, c=colors)
 
 key_labels = {
     1: "C",
@@ -67,11 +73,13 @@ key_labels = {
     11: "Bb",
     6: "F",
 }
-tick_angles = [angle_map[k] for k in circle_order]
-tick_labels = [key_labels[k] for k in circle_order]
-ax.set_xticks(tick_angles)
-ax.set_xticklabels(tick_labels)
-
-ax.set_rlabel_position(90)
-ax.set_ylabel("BPM", labelpad=20)
-plt.show()
+fig.update_layout(
+    xaxis={
+        "tickmode": "array",
+        "tickvals": list(range(len(circle_order))),
+        "ticktext": [key_labels[k] for k in circle_order],
+    },
+    legend={"title": "Mode"},
+    title="BPM vs Circle‑of‑Fifths (interactive)",
+)
+fig.show()

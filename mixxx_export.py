@@ -25,7 +25,10 @@ FROM library;
 """,
     conn,
 )
-print(df.head())
+
+df["key_is_minor"] = df["key_id"] > 12
+df["equiv_major_key"] = df["key_id"]
+df.loc[df["key_is_minor"], "equiv_major_key"] = (df["key_id"] - 13 + 3) % 12 + 1
+print(df.head().to_string())
 
 conn.close()
-

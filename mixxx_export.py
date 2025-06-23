@@ -35,7 +35,7 @@ df.loc[df["key_is_minor"], "equiv_major_key"] = (df["key_id"] - 13 + 3) % 12 + 1
 print(df.head().to_string())
 
 circle_order = [1, 8, 3, 10, 5, 12, 7, 2, 9, 4, 11, 6]
-angle_map = {key_id: (2 * np.pi * idx / 12) for idx, key_id in enumerate(circle_order)}
+angle_map = {key_id: idx for idx, key_id in enumerate(circle_order)}
 
 df["key_pos"] = df["equiv_major_key"].map(angle_map)
 

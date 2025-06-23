@@ -154,3 +154,4 @@ cython_debug/
 working_io/*.mp3
 working_io/*.png
 
+out/

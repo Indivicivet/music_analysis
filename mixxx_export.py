@@ -56,14 +56,22 @@ df_filt = df_all[
     & (df_all["bpm"] <= 240)
 ]
 
+df_filt = df_filt.assign(
+    key_pos_jitter=(
+        df_filt["key_pos"] + np.random.uniform(-0.4, 0.4, size=len(df_filt))
+    )
+)
+
 fig = px.scatter(
     df_filt,
-    x="key_pos_ext",
+    x="key_pos_jitter",
     y="bpm",
     color="key_is_minor",
     color_discrete_map={False: "green", True: "purple"},
     hover_data=["artist", "title", "key", "bpm"],
-    labels={"key_pos_ext": "Circle‑of‑Fifths Position", "bpm": "BPM", "color": "Mode"},
+    labels={
+        "key_pos_jitter": "Circle‑of‑Fifths Position", "bpm": "BPM", "color": "Mode"
+    },
 )
 
 key_labels = {

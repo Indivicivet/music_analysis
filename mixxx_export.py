@@ -111,6 +111,7 @@ fig.show()
 # standalone HTML, so we can augment with "click to copy file track"
 chart_div = pyo.plot(fig, include_plotlyjs="cdn", output_type="div")
 output_file = Path(__file__).parent / "out" / "bpm_circle.html"
+output_file.parent.mkdir(exist_ok=True, parents=True)
 output_file.write_text(
     f"""<!DOCTYPE html>
 <html>

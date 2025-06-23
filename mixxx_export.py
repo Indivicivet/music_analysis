@@ -64,7 +64,7 @@ df_filt = df_all[
 
 df_filt = df_filt.assign(
     key_pos_jitter=(
-        df_filt["key_pos"] + np.random.uniform(-0.4, 0.4, size=len(df_filt))
+        df_filt["key_pos_ext"] + np.random.uniform(-0.4, 0.4, size=len(df_filt))
     ),
     # jitter bpm for the very zoomed-in case:
     bpm_jitter=(

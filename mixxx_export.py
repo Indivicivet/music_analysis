@@ -68,19 +68,15 @@ fig = px.scatter(
     y="bpm",
     color="key_is_minor",
     color_discrete_map={False: "green", True: "purple"},
-    hover_data={
-        "key_is_minor": False,
-        "key_pos_jitter": False,
-        "artist": True,
-        "title": True,
-        "bpm": False,
-        "key": False,
-    },
+    custom_data=["artist", "title"],
     labels={
         "key_pos_jitter": "Circle‑of‑Fifths Position",
         "bpm": "BPM",
         "color": "Mode",
     },
+)
+fig.update_traces(
+    hovertemplate="%{customdata[0]}<br>%{customdata[1]}<extra></extra>"
 )
 
 key_labels = {

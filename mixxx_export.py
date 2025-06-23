@@ -5,6 +5,7 @@ import sqlite3
 import pandas as pd
 import numpy as np
 import plotly.express as px
+import plotly.offline as pyo
 
 conn = sqlite3.connect(
     database=(
@@ -18,16 +19,20 @@ conn = sqlite3.connect(
 cur = conn.cursor()
 df = pd.read_sql_query(
     """SELECT
-    artist,
-    title,
-    bpm,
-    key,
-    key_id
-FROM library;
+    library.artist,
+    library.title,
+    library.bpm,
+    library.key,
+    library.key_id,
+    track_locations.location
+FROM library
+LEFT JOIN track_locations ON library.location = track_locations.id
 """,
     conn,
 )
 conn.close()
+
+df["file_path"] = df["location"].fillna("").astype(str)
 
 df["key_is_minor"] = df["key_id"] > 12
 df["equiv_major_key"] = df["key_id"]
@@ -68,7 +73,7 @@ fig = px.scatter(
     y="bpm",
     color="key_is_minor",
     color_discrete_map={False: "green", True: "purple"},
-    custom_data=["artist", "title"],
+    custom_data=["artist", "title", "file_path"],
     labels={
         "key_pos_jitter": "Circle‑of‑Fifths Position",
         "bpm": "BPM",
@@ -103,3 +108,39 @@ fig.update_layout(
     title="BPM vs Circle‑of‑Fifths (interactive)",
 )
 fig.show()
+# standalone HTML, so we can augment with "click to copy file track"
+chart_div = pyo.plot(fig, include_plotlyjs="cdn", output_type="div")
+output_file = Path(__file__).parent / "out" / "bpm_circle.html"
+output_file.write_text(
+    f"""<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>BPM vs Circle-of-Fifths</title>
+  </head>
+  <body>
+""" + chart_div + """
+    <script>
+      const plotDiv = document.getElementsByClassName(
+        "plotly-graph-div"
+      )[0];
+      plotDiv.on("plotly_click", (data) => {
+        const filePath = data.points[0].customdata[2];
+        const fileStem = filePath
+          .split("/")
+          .pop()
+          .split(".")
+          .slice(0, -1)
+          .join(".");
+        navigator.clipboard
+          .writeText(fileStem)
+          .then(() => console.log("Copied:", fileStem))
+          .catch((err) => console.error("Clipboard error:", err));
+      });
+    </script>
+  </body>
+</html>
+""",
+    encoding="UTF-8",
+)
+webbrowser.open(output_file.absolute().as_uri())
